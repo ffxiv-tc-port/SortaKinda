@@ -1,8 +1,8 @@
 {
   "Author": "MidoriKami",
   "Name": "SortaKinda",
-  "Punchline": "Total customization of your inventory",
-  "Description": "Sort your inventory however you want and keep it sorted.",
+  "Punchline": "全面自訂物品欄排序方式。",
+  "Description": "依照你的需求整理物品欄，並維持指定的排序方式。",
   "Tags": [
     "utility"
   ],
@@ -11,6 +11,6 @@
     "Other"
   ],
   "InternalName": "sortakinda",
-  "RepoUrl": "https://github.com/MidoriKami/SortaKinda",
+  "RepoUrl": "https://github.com/cycleapple/SortaKinda/tree/api13-tw",
   "AcceptsFeedback": false
 }

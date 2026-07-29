@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Dalamud.NET.Sdk/13.0.0">
     <PropertyGroup>
-        <PackageProjectUrl>https://github.com/MidoriKami/SortaKinda.git</PackageProjectUrl>
-        <Version>2.1.1.5</Version>
+        <PackageProjectUrl>https://github.com/cycleapple/SortaKinda/tree/api13-tw</PackageProjectUrl>
+        <Version>2.1.1.6</Version>
     </PropertyGroup>
 
     <ItemGroup>
