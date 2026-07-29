@@ -18,14 +18,14 @@ public class RuleConfigWindow : Window {
     private readonly SortingRule rule;
     private static Vector2 FooterSize => ImGuiHelpers.ScaledVector2(0.0f, 30.0f);
 
-    public RuleConfigWindow(SortingRule sortingRule, List<SortingRule> sortingRules) : base($"SortaKinda Rule Configuration - {sortingRule.Name}###RuleConfig{sortingRule.Id}", new Vector2(550.0f, 375.0f)) {
+    public RuleConfigWindow(SortingRule sortingRule, List<SortingRule> sortingRules) : base($"SortaKinda 規則設定－{sortingRule.Name}###RuleConfig{sortingRule.Id}", new Vector2(550.0f, 375.0f)) {
         rule = sortingRule;
         ruleList = sortingRules;
         view = new SortingRuleView(sortingRule);
         
         TitleBarButtons.Add(new TitleBarButton {
             Icon = FontAwesomeIcon.Cog,
-            ShowTooltip = () => ImGui.SetTooltip("Additional Settings"),
+            ShowTooltip = () => ImGui.SetTooltip("其他設定"),
             IconOffset = new Vector2(2.0f, 2.0f),
             Click = _ => ImGui.OpenPopup("Advanced Options"),
         });
@@ -54,10 +54,10 @@ public class RuleConfigWindow : Window {
     }
     
     private void DrawPopup() {
-        using var popup = ImRaii.Popup("Advanced Options");
+        using var popup = ImRaii.Popup("進階選項");
         if (!popup) return;
                 
-        if (ImGui.Checkbox("Use Inclusive Logic", ref rule.InclusiveAnd)) {
+        if (ImGui.Checkbox("使用任一符合邏輯", ref rule.InclusiveAnd)) {
             System.SortController.SaveConfig();
         }
     }
@@ -87,20 +87,20 @@ public class RuleConfigWindow : Window {
         var imGuiName = rule.Name;
         if (ImGui.InputText("##NameEdit", ref imGuiName, 1024, ImGuiInputTextFlags.AutoSelectAll)) {
             rule.Name = imGuiName;
-            WindowName = $"SortaKinda Rule Configuration - {rule.Name}###RuleConfig{rule.Id}##SortaKinda";
+            WindowName = $"SortaKinda 規則設定－{rule.Name}###RuleConfig{rule.Id}##SortaKinda";
         }
     }
 
     private void DrawDeleteButton() {
         using var disabled = ImRaii.Disabled(!(ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl));
         
-        if (ImGui.Button("Delete", ImGuiHelpers.ScaledVector2(100.0f, 23.0f))) {
+        if (ImGui.Button("刪除", ImGuiHelpers.ScaledVector2(100.0f, 23.0f))) {
             ruleList.Remove(rule);
             IsOpen = false;
         }
         
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-            ImGui.SetTooltip("Hold Shift + Control while clicking to delete this rule");
+            ImGui.SetTooltip("按住 Shift + Ctrl 並點擊，即可刪除此規則");
         }
     }
 
@@ -115,14 +115,14 @@ public class RuleConfigWindow : Window {
 
         ImGui.SameLine(ImGui.GetContentRegionAvail().X - buttonSize.X * 2.0f - ImGui.GetStyle().ItemSpacing.X);
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 3.0f * ImGuiHelpers.GlobalScale);
-        if (ImGui.Button("Save", buttonSize)) {
+        if (ImGui.Button("儲存", buttonSize)) {
             System.ModuleController.Sort();
             System.SortController.SaveConfig();
         }
 
         ImGui.SameLine();
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 3.0f * ImGuiHelpers.GlobalScale);
-        if (ImGui.Button("Save & Close", buttonSize)) {
+        if (ImGui.Button("儲存並關閉", buttonSize)) {
             System.ModuleController.Sort();
             System.SortController.SaveConfig();
             Close();

@@ -21,12 +21,12 @@ public class SortingRuleTooltipView(SortingRule sortingRule) {
         }
 
         ImGui.SameLine();
-        ImGui.Text(sortingRule.Name);
+        ImGui.Text(sortingRule.Id is SortController.DefaultId ? "未排序" : sortingRule.Name);
 
         if (sortingRule.Id is not SortController.DefaultId) {
             var itemFiltersString = GetAllowedItemsString();
 
-            ImGui.TextColored(KnownColor.Gray.Vector(), itemFiltersString.IsNullOrEmpty() ? "Any Item" : itemFiltersString);
+            ImGui.TextColored(KnownColor.Gray.Vector(), itemFiltersString.IsNullOrEmpty() ? "任何物品" : itemFiltersString);
             ImGui.TextColored(KnownColor.Gray.Vector(), sortingRule.SortMode.GetDescription());
         }
 
@@ -38,9 +38,9 @@ public class SortingRuleTooltipView(SortingRule sortingRule) {
             sortingRule.AllowedItemTypes.Count > 0 ? string.Join(", ", sortingRule.AllowedItemTypes.Select(type => Service.DataManager.GetExcelSheet<ItemUICategory>().GetRow(type).Name.ExtractText())) : string.Empty,
             sortingRule.AllowedNameRegexes.Count > 0 ? string.Join(", ", sortingRule.AllowedNameRegexes.Select(regex => @$"""{regex.Text}""")) : string.Empty,
             sortingRule.AllowedItemRarities.Count > 0 ? string.Join(", ", sortingRule.AllowedItemRarities.Select(rarity => rarity.GetDescription())) : string.Empty,
-            sortingRule.ItemLevelFilter.Enable ? $"{sortingRule.ItemLevelFilter.MinValue} ilvl → {sortingRule.ItemLevelFilter.MaxValue} ilvl" : string.Empty,
-            sortingRule.VendorPriceFilter.Enable ? $"{sortingRule.VendorPriceFilter.MinValue} gil → {sortingRule.VendorPriceFilter.MaxValue} gil" : string.Empty,
-            sortingRule.LevelFilter.Enable ? $"{sortingRule.LevelFilter.MinValue} lvl → {sortingRule.LevelFilter.MaxValue} lvl" : string.Empty,
+            sortingRule.ItemLevelFilter.Enable ? $"品級 {sortingRule.ItemLevelFilter.MinValue} → {sortingRule.ItemLevelFilter.MaxValue}" : string.Empty,
+            sortingRule.VendorPriceFilter.Enable ? $"{sortingRule.VendorPriceFilter.MinValue} 金幣 → {sortingRule.VendorPriceFilter.MaxValue} 金幣" : string.Empty,
+            sortingRule.LevelFilter.Enable ? $"等級 {sortingRule.LevelFilter.MinValue} → {sortingRule.LevelFilter.MaxValue}" : string.Empty,
         };
 
         return string.Join("\n", strings

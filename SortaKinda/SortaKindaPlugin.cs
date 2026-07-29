@@ -118,21 +118,21 @@ public sealed class SortaKindaPlugin : IDalamudPlugin {
             lastSortCommand = DateTime.UtcNow;
         }
         else {
-            Service.ChatGui.PrintError($"Attempted to sort too soon after last sort. Try again in {10 - timeSinceLastSort.Seconds} seconds.");
+            Service.ChatGui.PrintError($"距離上次排序時間太短，請在 {10 - timeSinceLastSort.Seconds} 秒後再試。");
         }
     }
     
     public static void DrawConfig() {
-        var settingsChanged = ImGui.Checkbox("Sort on Item Added", ref System.SystemConfig.SortOnItemAdded);
-        settingsChanged |= ImGui.Checkbox("Sort on Item Removed", ref System.SystemConfig.SortOnItemRemoved);
-        settingsChanged |= ImGui.Checkbox("Sort on Item Changed", ref System.SystemConfig.SortOnItemChanged);
-        settingsChanged |= ImGui.Checkbox("Sort on Item Moved", ref System.SystemConfig.SortOnItemMoved);
-        settingsChanged |= ImGui.Checkbox("Sort on Item Merged", ref System.SystemConfig.SortOnItemMerged);
-        settingsChanged |= ImGui.Checkbox("Sort on Item Split", ref System.SystemConfig.SortOnItemSplit);
-        settingsChanged |= ImGui.Checkbox("Sort on Zone Change", ref System.SystemConfig.SortOnZoneChange);
-        settingsChanged |= ImGui.Checkbox("Sort on Job Change", ref System.SystemConfig.SortOnJobChange);
-        settingsChanged |= ImGui.Checkbox("Sort on Login", ref System.SystemConfig.SortOnLogin);
-        settingsChanged |= ImGui.Checkbox("Reorder Unsorted Items", ref System.SystemConfig.ReorderUnsortedItems);
+        var settingsChanged = ImGui.Checkbox("新增物品時排序", ref System.SystemConfig.SortOnItemAdded);
+        settingsChanged |= ImGui.Checkbox("移除物品時排序", ref System.SystemConfig.SortOnItemRemoved);
+        settingsChanged |= ImGui.Checkbox("物品變更時排序", ref System.SystemConfig.SortOnItemChanged);
+        settingsChanged |= ImGui.Checkbox("移動物品時排序", ref System.SystemConfig.SortOnItemMoved);
+        settingsChanged |= ImGui.Checkbox("合併物品時排序", ref System.SystemConfig.SortOnItemMerged);
+        settingsChanged |= ImGui.Checkbox("拆分物品時排序", ref System.SystemConfig.SortOnItemSplit);
+        settingsChanged |= ImGui.Checkbox("切換地區時排序", ref System.SystemConfig.SortOnZoneChange);
+        settingsChanged |= ImGui.Checkbox("切換職業時排序", ref System.SystemConfig.SortOnJobChange);
+        settingsChanged |= ImGui.Checkbox("登入時排序", ref System.SystemConfig.SortOnLogin);
+        settingsChanged |= ImGui.Checkbox("重新排列未排序物品", ref System.SystemConfig.ReorderUnsortedItems);
 
         if (settingsChanged) {
             SaveConfig();

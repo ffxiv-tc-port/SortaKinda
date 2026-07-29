@@ -22,7 +22,7 @@ public class ConfigurationWindow : Window {
         new GeneralConfigurationTab(),
     ]);
 
-    public ConfigurationWindow() : base("SortaKinda - Configuration Window", new Vector2(840.0f, 636.0f), true) {
+    public ConfigurationWindow() : base("SortaKinda－設定", new Vector2(840.0f, 636.0f), true) {
         Flags |= ImGuiWindowFlags.NoScrollbar;
         Flags |= ImGuiWindowFlags.NoScrollWithMouse;
 
@@ -30,7 +30,7 @@ public class ConfigurationWindow : Window {
         
         TitleBarButtons.Add(new TitleBarButton {
             Icon = FontAwesomeIcon.Cog,
-            ShowTooltip = () => ImGui.SetTooltip("Open Configuration Manager"),
+            ShowTooltip = () => ImGui.SetTooltip("開啟設定管理器"),
             Click = _ => System.WindowManager.AddWindow(new ConfigurationManagerWindow(), WindowFlags.OpenImmediately),
             IconOffset = new Vector2(2.0f, 2.0f),
         });
@@ -68,7 +68,7 @@ public class ConfigurationWindow : Window {
 }
 
 public class MainInventoryTab : IInventoryConfigurationTab {
-    public string Name => "Main Inventory";
+    public string Name => "物品欄";
     
     public bool Disabled => false;
     
@@ -77,7 +77,7 @@ public class MainInventoryTab : IInventoryConfigurationTab {
 }
 
 public class ArmoryInventoryTab : IInventoryConfigurationTab {
-    public string Name => "Armory Inventory";
+    public string Name => "兵裝庫";
     
     public bool Disabled => false;
     
@@ -86,12 +86,12 @@ public class ArmoryInventoryTab : IInventoryConfigurationTab {
 }
 
 public class GeneralConfigurationTab : ITabItem {
-    public string Name => "General Settings";
+    public string Name => "一般設定";
     
     public bool Disabled => false;
     
     public void Draw() {
-        ImGuiTweaks.Header("General Settings");
+        ImGuiTweaks.Header("一般設定");
         using var indent = ImRaii.PushIndent();
         
         SortaKindaPlugin.DrawConfig();

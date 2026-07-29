@@ -31,7 +31,7 @@ public unsafe class InventoryController : AddonController<AddonInventoryExpansio
 		sortButton = new CircleButtonNode {
 			Size = new Vector2(28.0f, 28.0f),
 			Position = new Vector2(19.0f, 414.0f),
-			Tooltip = "SortaKinda: Sort all Inventories",
+			Tooltip = "SortaKinda：排序所有物品欄",
 			IsVisible = true,
 			Icon = ButtonIcon.Sort,
 		};

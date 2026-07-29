@@ -9,7 +9,7 @@ namespace SortaKinda.Windows;
 public class TutorialWindow : Window {
     private readonly TabBar tabBar;
 
-    public TutorialWindow() : base("SortaKinda - Tutorial", new Vector2(640.0f, 425.0f)) {
+    public TutorialWindow() : base("SortaKinda－使用教學", new Vector2(640.0f, 425.0f)) {
 
         Flags |= ImGuiWindowFlags.NoScrollbar;
         Flags |= ImGuiWindowFlags.NoScrollWithMouse;
@@ -30,7 +30,7 @@ public class TutorialWindow : Window {
 }
 
 public class TutorialAboutTab : ITabItem {
-    public string Name => "About";
+    public string Name => "關於";
     
     public bool Disabled => false;
     
@@ -44,16 +44,16 @@ public class TutorialAboutTab : ITabItem {
         ImGui.PopStyleVar();
     }
 
-    private const string AboutText = "Welcome to SortaKinda! A highly customizable inventory management tool.\n" +
-                                     "This plugin was designed for you to define precisely what items you want to always be in specific sections of your inventory.\n\n" +
-                                     "SortaKinda has no relation to the built in 'isort' function. It does not interact with 'isort' in any way.\n" +
-                                     "SortaKinda will override any other sorting systems you attempt to use.\n\n" +
-                                     "Automatic sort triggers are available in the general settings tab, these triggers allow SortaKinda to automatically re-sort your inventory as you are playing.\n\n" +
-                                     "There may be times where SortaKinda might not catch a change, worry not as triggers should be frequent enough to sort things out on the next change.";
+    private const string AboutText = "歡迎使用 SortaKinda！這是一款可高度自訂的物品欄管理工具。\n" +
+                                     "你可以精確指定哪些物品應固定整理至物品欄的特定區域。\n\n" +
+                                     "SortaKinda 與遊戲內建的「isort」功能無關，也不會與其互動。\n" +
+                                     "使用 SortaKinda 排序時，會覆蓋其他排序系統產生的排列結果。\n\n" +
+                                     "「一般設定」分頁提供自動排序觸發條件，可在遊玩過程中自動重新整理物品欄。\n\n" +
+                                     "SortaKinda 偶爾可能沒有捕捉到某次變更；後續觸發條件通常會很快再次執行排序。";
 }
 
 public class TutorialSortingRules : ITabItem {
-    public string Name => "Sorting Rules";
+    public string Name => "排序規則";
     
     public bool Disabled => false;
     
@@ -67,17 +67,17 @@ public class TutorialSortingRules : ITabItem {
         ImGui.PopStyleVar();
     }
 
-    private const string SortingRulesHelp = "Sorting rules are definitions for what items you want to allow into specific inventory slots.\n" +
-                                            "Rules are shown on the left side of the configuration window, new rules are added to the bottom of the list.\n\n" +
-                                            "Rules can be deleted by pressing and holding Shift and Control at the same time, then clicking the trash icon. The 'Unsorted' rule can not be deleted.\n\n" +
-                                            "If multiple types of filters are used in the same rule, then an item will only be allowed if all filter types permit it.\n\n" +
-                                            "For example, if you set a rule with ItemType: Miscallany, and ItemRarity: Green, then only items that are both Miscellany AND Green rarity will be allowed in those slots.\n\n" +
-                                            "Items that don't match any rules will be moved into the 'Unsorted' sections of your inventory. You must always have some inventory slots marked as 'Unsorted'.\n\n" +
-                                            "If SortaKinda is unable to move an item out of a sorted section into a 'Unsorted' section, then it will act as if that item belongs in the sorted section and order it based on that sections rule.";
+    private const string SortingRulesHelp = "排序規則用來定義哪些物品可以放入指定的物品欄欄位。\n" +
+                                            "規則會顯示在設定視窗左側，新規則會加入清單底部。\n\n" +
+                                            "若要刪除規則，請同時按住 Shift 與 Ctrl，再點擊垃圾桶圖示。「未排序」規則無法刪除。\n\n" +
+                                            "同一規則使用多種類型的篩選時，物品必須符合所有篩選類型才會被允許。\n\n" +
+                                            "例如：規則的物品類型設為「雜貨」、物品稀有度設為「綠色」時，只有同時屬於雜貨且為綠色稀有度的物品才能放入這些欄位。\n\n" +
+                                            "不符合任何規則的物品會移至物品欄的「未排序」區域，因此必須保留部分欄位並標記為「未排序」。\n\n" +
+                                            "若 SortaKinda 無法將物品從已排序區域移至「未排序」區域，會暫時將該物品視為屬於目前區域，並依照該區域的規則排序。";
 }
 
 public class TutorialConfiguringInventory : ITabItem {
-    public string Name => "Using Rules";
+    public string Name => "使用規則";
     
     public bool Disabled => false;
     
@@ -91,16 +91,16 @@ public class TutorialConfiguringInventory : ITabItem {
         ImGui.PopStyleVar();
     }
 
-    private const string UsingRulesHelp = "To use rules, you need to first select a rule on the left side of the configuration window.\n" +
-                                          "The currently selected rule will have a filledin dot next to the color/name of the rule.\n\n" +
-                                          "Once you have a rule selected you can 'paint' your inventory slots on the right side of the configuration window. Painted slots do not have to be adjacent to each other.\n\n" +
-                                          "Whenever a sort is triggered, items that match the rules of a painted inventory slot will try to be moved into those inventory slots, and then re-ordered according to the rule's settings.\n" +
-                                          "Items that don't match a rule but are in a rules inventory slots will be moved out into 'Unsorted' slots.\n\n" +
-                                          "You must always have some inventory slots marked as 'Unsorted'.";
+    private const string UsingRulesHelp = "使用規則前，請先在設定視窗左側選取一項規則。\n" +
+                                          "目前選取的規則會在其顏色與名稱旁顯示實心圓點。\n\n" +
+                                          "選取規則後，即可在設定視窗右側將規則「塗入」物品欄欄位；套用同一規則的欄位不必彼此相鄰。\n\n" +
+                                          "每次觸發排序時，符合欄位規則的物品會嘗試移入那些欄位，之後再依規則設定重新排列。\n" +
+                                          "已位於規則欄位、但不符合該規則的物品，則會移至「未排序」欄位。\n\n" +
+                                          "請務必保留部分物品欄欄位並標記為「未排序」。";
 }
 
 public class TutorialAdvancedSorting : ITabItem {
-    public string Name => "Advanced Techniques";
+    public string Name => "進階技巧";
     
     public bool Disabled => false;
     
@@ -114,11 +114,11 @@ public class TutorialAdvancedSorting : ITabItem {
         ImGui.PopStyleVar();
     }
 
-    private const string AdvancedTech = "SortaKinda evaluates sorting rules in a specific order, " +
-                                        "this allows you to define rules in such a way that you can have items that match multiple rules always end up in one specific section of your inventory.\n\n" +
-                                        "Rules are evaluated from the top of the list (where 'Unsorted' is), to the bottom of the list (where the add new rule button is), " +
-                                        "If an item would be allowed by multiple rules, the rule lowest in the list will get the item in the end.\n\n" +
-                                        "You can use this characteristic of SortaKinda to define generalized sorting rules at the top of the list, and more specific sorting rules at the bottom of the list, " +
-                                        "any items that match the more specific rules at the bottom will have the items in the end.\n\n" +
-                                        "In other words, you can consider the order the rules are in to be a soft-priority system, where the rules on the bottom are more important.";
+    private const string AdvancedTech = "SortaKinda 會依固定順序評估排序規則，" +
+                                        "因此可讓同時符合多項規則的物品，最終固定進入物品欄的特定區域。\n\n" +
+                                        "規則會從清單頂端（「未排序」所在處）依序評估至底端（新增規則按鈕所在處）。" +
+                                        "若物品同時符合多項規則，最終會由清單中位置最低的規則取得該物品。\n\n" +
+                                        "你可以利用這項特性，將較通用的排序規則放在清單上方，較具體的規則放在下方；" +
+                                        "符合下方具體規則的物品，最後會歸入該規則。\n\n" +
+                                        "換句話說，規則順序可視為一種彈性優先權系統，越靠近清單底部的規則優先權越高。";
 }

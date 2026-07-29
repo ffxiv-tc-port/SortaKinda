@@ -48,29 +48,29 @@ public class ToggleFilter(PropertyFilter filter, ToggleFilterState state = Toggl
 }
 
 public enum PropertyFilter {
-    [Description("Untradable")]
+    [Description("不可交易")]
     Untradable,
     
-    [Description("Dyeable")]
+    [Description("可染色")]
     Dyeable,
     
-    [Description("Unique")]
+    [Description("唯一物品")]
     Unique,
     
-    [Description("Collectable")]
+    [Description("收藏品")]
     Collectable,
     
-    [Description("Repairable")]
+    [Description("可修理")]
     Repairable,
 }
 
 public enum ToggleFilterState {
-    [Description("Ignored")]
+    [Description("忽略")]
     Ignored,
     
-    [Description("Allow")]
+    [Description("允許")]
     Allow,
     
-    [Description("Disallow")]
+    [Description("不允許")]
     Disallow,
 }

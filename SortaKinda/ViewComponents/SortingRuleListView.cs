@@ -52,7 +52,7 @@ public class SortingRuleListView(SortController sortController, List<SortingRule
             var newRule = new SortingRule {
                 Color = GetRandomColor(),
                 Id = Guid.NewGuid().ToString("N"),
-                Name = "New Rule",
+                Name = "新規則",
                 Index = rules.Count
             };
 
@@ -107,7 +107,7 @@ public class SortingRuleListView(SortController sortController, List<SortingRule
         ImGui.ColorEdit4($"##{rule.Id}ColorEdit", ref ruleColor, ImGuiColorEditFlags.NoPicker | ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoTooltip);
 
         ImGui.SameLine();
-        ImGui.TextUnformatted(rule.Name);
+        ImGui.TextUnformatted(rule.Id is SortController.DefaultId ? "未排序" : rule.Name);
 
         ImGui.BeginDisabled(rule.Id is SortController.DefaultId);
         DrawDeleteButton(index);
@@ -130,7 +130,7 @@ public class SortingRuleListView(SortController sortController, List<SortingRule
         }
 
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-            ImGui.SetTooltip("Hold Shift + Control while clicking to delete this rule");
+            ImGui.SetTooltip("按住 Shift + Ctrl 並點擊，即可刪除此規則");
         }
     }
 

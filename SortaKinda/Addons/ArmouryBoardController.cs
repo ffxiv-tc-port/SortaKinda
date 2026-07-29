@@ -27,10 +27,10 @@ public unsafe class ArmouryBoardController : AddonController<AddonInventoryExpan
 		}
 		
 		sortButton = new TextButtonNode {
-			Label = "Sort",
+			Label = "排序",
 			Size = new Vector2(100.0f, 28.0f),
 			Position = new Vector2(19.0f, 566.0f),
-			Tooltip = "SortaKinda: Sort all Inventories",
+			Tooltip = "SortaKinda：排序所有物品欄",
 			IsVisible = true,
 		};
 		

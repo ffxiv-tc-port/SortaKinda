@@ -10,7 +10,13 @@ public class RangeFilter(string label, int minValue, int maxValue) {
     public int MinValue = minValue;
 
     public void DrawConfig() {
-        ImGui.TextUnformatted(Label);
+        var displayLabel = Label switch {
+            "Level Filter" => "裝備等級篩選",
+            "Item Level Filter" => "品級篩選",
+            "Vendor Price Filter" => "商店出售價格篩選",
+            _ => Label,
+        };
+        ImGui.TextUnformatted(displayLabel);
 
         ImGui.Checkbox($"##Enable{Label}", ref Enable);
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X * 2.0f);

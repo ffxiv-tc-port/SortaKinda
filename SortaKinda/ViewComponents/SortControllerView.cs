@@ -27,26 +27,26 @@ public class SortControllerView(SortController sortingController) {
         var sortButtonSize = ImGuiHelpers.ScaledVector2(100.0f, 23.0f);
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 3.0f * ImGuiHelpers.GlobalScale);
-        ImGui.TextUnformatted("Sorting Rules");
+        ImGui.TextUnformatted("排序規則");
 
         ImGui.SameLine(ImGui.GetContentRegionAvail().X - importExportButtonSize.X * 3.0f - sortButtonSize.X - ImGui.GetStyle().ItemSpacing.X * 3.0f);
 
-        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Question, "HelpButton", importExportButtonSize, "Open Help Window")) {
+        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Question, "HelpButton", importExportButtonSize, "開啟說明視窗")) {
             System.WindowManager.AddWindow(new TutorialWindow(), WindowFlags.OpenImmediately);
         }
 
         ImGui.SameLine();
-        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Clipboard, "ImportButton", importExportButtonSize, "Import rules from clipboard")) {
+        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Clipboard, "ImportButton", importExportButtonSize, "從剪貼簿匯入規則")) {
             ImportRules();
         }
         
         ImGui.SameLine();
-        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.ExternalLinkAlt, "ExportButton", importExportButtonSize, "Export rules to clipboard")) {
+        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.ExternalLinkAlt, "ExportButton", importExportButtonSize, "將規則匯出至剪貼簿")) {
             ExportRules();
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Sort All", sortButtonSize)) {
+        if (ImGui.Button("全部排序", sortButtonSize)) {
             sortingController.SortAllInventories();
         }
 
@@ -61,13 +61,13 @@ public class SortControllerView(SortController sortingController) {
             var uncompressed = Util.DecompressString(decodedString);
 
             if (uncompressed.IsNullOrEmpty()) {
-                Service.ChatGui.PrintError("Tried to import sorting rules, but got nothing, try copying the code again.");
+                Service.ChatGui.PrintError("匯入排序規則時未取得內容，請重新複製代碼後再試。");
                 return;
             }
 
             if (JsonSerializer.Deserialize<ClipboardRules>(uncompressed, SerializerOptions) is { } clipboardData) {
                 if (clipboardData.Rules.Length is 0) {
-                    Service.ChatGui.PrintError("Tried to import sorting rules, but got nothing, try copying the code again.");
+                    Service.ChatGui.PrintError("匯入排序規則時未取得內容，請重新複製代碼後再試。");
                     return;
                 }
 
@@ -80,8 +80,8 @@ public class SortControllerView(SortController sortingController) {
                     }
                 }
 
-                Service.ChatGui.Print($"Received {clipboardData.Rules.Length} sorting rules from clipboard. ", "Import");
-                Service.ChatGui.Print($"Added {addedCount} new sorting rules.", "Import");
+                Service.ChatGui.Print($"已從剪貼簿讀取 {clipboardData.Rules.Length} 條排序規則。", "匯入");
+                Service.ChatGui.Print($"已新增 {addedCount} 條排序規則。", "匯入");
                 sortingController.SaveConfig();
 
                 var mainInventoryModule = System.ModuleController.GetModule<MainInventoryModule>();
@@ -96,7 +96,7 @@ public class SortControllerView(SortController sortingController) {
             }
         }
         catch (Exception e) {
-            Service.ChatGui.PrintError("Something went wrong trying to import rules, check you copied the code correctly.");
+            Service.ChatGui.PrintError("匯入規則時發生錯誤，請確認複製的代碼是否正確。");
             Service.Log.Error(e, "Handled exception while importing rules.");
         }
     }
@@ -116,7 +116,7 @@ public class SortControllerView(SortController sortingController) {
         var compressed = Util.CompressString(jsonString);
         ImGui.SetClipboardText(Convert.ToBase64String(compressed));
 
-        Service.ChatGui.Print($"Exported {data.Rules.Length} rules to clipboard.", "Export");
+        Service.ChatGui.Print($"已將 {data.Rules.Length} 條規則匯出至剪貼簿。", "匯出");
     }
 
     private void DrawRules() 

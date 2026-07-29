@@ -28,9 +28,9 @@ public class SortingRuleView(SortingRule rule) {
 }
 
 public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTab {
-    public string Name => "Item Type Filter";
+    public string Name => "物品類型篩選";
     
-    public string FirstLabel => "Allowed Item Types";
+    public string FirstLabel => "允許的物品類型";
 
     public bool Disabled => false;
 
@@ -54,11 +54,11 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
     private UserRegex newRegex = new();
     private bool setNameFocus = true;
 
-    public string Name => "Item Name Filter";
+    public string Name => "物品名稱篩選";
     
     public bool Disabled => false;
     
-    public string FirstLabel => "Allowed Item Names";
+    public string FirstLabel => "允許的物品名稱";
     
     public SortingRule SortingRule { get; } = rule;
 
@@ -74,7 +74,7 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
         if (!child) return;
         
         if (SortingRule.AllowedNameRegexes.Count is 0) {
-            ImGui.TextColored(KnownColor.Orange.Vector(), "Nothing Filtered");
+            ImGui.TextColored(KnownColor.Orange.Vector(), "未設定篩選條件");
         }
 
         foreach (var userRegex in SortingRule.AllowedNameRegexes) {
@@ -98,9 +98,9 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
             setNameFocus = false;
         }
 
-        ImGui.TextColored(KnownColor.Gray.Vector(), "Supports Regex for item name filtering");
+        ImGui.TextColored(KnownColor.Gray.Vector(), "物品名稱篩選支援正規表示式");
 
-        if (UserRegex.DrawRegexInput("##NewName", ref newRegex, "Item Name", null, ImGui.GetContentRegionAvail().X - buttonSize.X - ImGui.GetStyle().ItemSpacing.X, ImGui.GetColorU32(KnownColor.OrangeRed.Vector()))) {
+        if (UserRegex.DrawRegexInput("##NewName", ref newRegex, "物品名稱", null, ImGui.GetContentRegionAvail().X - buttonSize.X - ImGui.GetStyle().ItemSpacing.X, ImGui.GetColorU32(KnownColor.OrangeRed.Vector()))) {
             if (newRegex.Regex is not null) {
                 SortingRule.AllowedNameRegexes.Add(newRegex);
                 newRegex = new UserRegex();
@@ -111,7 +111,7 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
         ImGui.SameLine();
 
         using var disabled = ImRaii.Disabled(newRegex.Regex is null || newRegex.Text.IsNullOrEmpty());
-        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Plus, "AddNameButton", buttonSize, "Add Name")) {
+        if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Plus, "AddNameButton", buttonSize, "新增名稱")) {
             if (newRegex.Regex is not null) {
                 SortingRule.AllowedNameRegexes.Add(newRegex);
                 newRegex = new UserRegex();
@@ -127,7 +127,7 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
         if (!itemFilterChild) return;
         
         if (SortingRule.AllowedItemTypes.Count is 0) {
-            ImGui.TextColored(KnownColor.Orange.Vector(), "Nothing Filtered");
+            ImGui.TextColored(KnownColor.Orange.Vector(), "未設定篩選條件");
         }
         
         foreach (var category in SortingRule.AllowedItemTypes) {
@@ -153,15 +153,15 @@ public class ItemTypeFilterTab(SortingRule rule) : IOneColumnRuleConfigurationTa
 }
 
 public class OtherFiltersTab(SortingRule rule) : ITwoColumnRuleConfigurationTab {
-    public string Name => "Other Filters";
+    public string Name => "其他篩選";
     
     public bool Disabled => false;
     
     public SortingRule SortingRule { get; } = rule;
     
-    public string FirstLabel => "Range Filters";
+    public string FirstLabel => "範圍篩選";
     
-    public string SecondLabel => "Item Rarity Filter";
+    public string SecondLabel => "物品稀有度篩選";
 
     public void DrawLeftSideContents() {
         SortingRule.LevelFilter.DrawConfig();
@@ -185,13 +185,13 @@ public class OtherFiltersTab(SortingRule rule) : ITwoColumnRuleConfigurationTab 
 }
 
 public class ToggleFiltersTab(SortingRule rule) : IOneColumnRuleConfigurationTab {
-    public string Name => "Property Filters";
+    public string Name => "屬性篩選";
     
     public bool Disabled => false;
     
     public SortingRule SortingRule { get; } = rule;
     
-    public string FirstLabel => "Property Filters";
+    public string FirstLabel => "屬性篩選";
     
     public void DrawContents() {
         SortingRule.UntradableFilter.DrawConfig();
@@ -203,19 +203,19 @@ public class ToggleFiltersTab(SortingRule rule) : IOneColumnRuleConfigurationTab
 }
 
 public class SortOrderTab(SortingRule rule) : ITwoColumnRuleConfigurationTab {
-    public string Name => "Sort Order";
+    public string Name => "排序順序";
     
     public bool Disabled => false;
     
     public SortingRule SortingRule { get; } = rule;
     
-    public string FirstLabel => "Sort By";
+    public string FirstLabel => "排序依據";
     
-    public string SecondLabel => "Sort Options";
+    public string SecondLabel => "排序選項";
 
     public void DrawLeftSideContents() {
-        ImGui.Text("Order items using");
-        ImGuiComponents.HelpMarker("The primary property of an item to use for ordering");
+        ImGui.Text("物品排序依據");
+        ImGuiComponents.HelpMarker("用來決定排序順序的主要物品屬性");
         var sortMode = SortingRule.SortMode;
         DrawRadioEnum(ref sortMode);
 
@@ -223,14 +223,14 @@ public class SortOrderTab(SortingRule rule) : ITwoColumnRuleConfigurationTab {
     }
 
     public void DrawRightSideContents() {
-        ImGui.Text("Sort item by");
-        ImGuiComponents.HelpMarker("Ascending: A -> Z\nDescending Z -> A");
+        ImGui.Text("排序方向");
+        ImGuiComponents.HelpMarker("遞增：A → Z\n遞減：Z → A");
         var sortDirection = SortingRule.Direction;
         DrawRadioEnum(ref sortDirection);
 
         ImGuiHelpers.ScaledDummy(8.0f);
-        ImGui.Text("Fill inventory slots from");
-        ImGuiComponents.HelpMarker("Top - Items are shifted to the top left-most slots\nBottom - Items are shifted to the bottom right-most slots");
+        ImGui.Text("物品欄填入方向");
+        ImGuiComponents.HelpMarker("頂端：物品移至左上方欄位\n底端：物品移至右下方欄位");
         var fillMode = SortingRule.FillMode;
         DrawRadioEnum(ref fillMode);
 

@@ -75,7 +75,7 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
 
     public Vector4 Color { get; set; }
     public string Id { get; set; } = SortController.DefaultId;
-    public string Name { get; set; } = "New Rule";
+    public string Name { get; set; } = "新規則";
     public int Index { get; set; }
     public HashSet<UserRegex> AllowedNameRegexes { get; set; } = [];
     public HashSet<uint> AllowedItemTypes { get; set; } = [];
@@ -195,58 +195,58 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
 }
 
 public enum FillMode {
-    [Description("Top")] 
+    [Description("頂端")]
     Top,
 
-    [Description("Bottom")] 
+    [Description("底端")]
     Bottom,
 }
 
 public enum ItemRarity {
-    [Description("White")] 
+    [Description("白色")]
     White = 1,
 
-    [Description("Green")] 
+    [Description("綠色")]
     Green = 2,
 
-    [Description("Blue")] 
+    [Description("藍色")]
     Blue = 3,
 
-    [Description("Purple")] 
+    [Description("紫色")]
     Purple = 4,
 
-    [Description("Pink")] 
+    [Description("粉紅色")]
     Pink = 7,
 }
 
 public enum SortOrderDirection {
-    [Description("Ascending")] 
+    [Description("遞增")]
     Ascending,
 
-    [Description("Descending")] 
+    [Description("遞減")]
     Descending,
 }
 
 public enum SortOrderMode {
-    [Description("Alphabetical")] 
+    [Description("名稱")]
     Alphabetically,
     
-    [Description("Item Level")] 
+    [Description("品級")]
     ItemLevel,
 
-    [Description("Rarity")] 
+    [Description("稀有度")]
     Rarity,
 
-    [Description("Sell Price")] 
+    [Description("出售價格")]
     SellPrice,
 
-    [Description("Item Id")] 
+    [Description("物品 ID")]
     ItemId,
     
-    [Description("Item Type")]
+    [Description("物品類型")]
     ItemType,
     
-    [Description("Level")]
+    [Description("裝備等級")]
     Level,
 }
 
