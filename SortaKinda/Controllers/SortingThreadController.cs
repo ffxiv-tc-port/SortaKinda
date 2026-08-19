@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using SortaKinda.Classes;
@@ -10,47 +7,44 @@ using SortaKinda.Classes;
 namespace SortaKinda.Controllers;
 
 public unsafe class SortingThreadController : IDisposable {
-    private readonly List<Task> sortingTasks = [];
-    
-    private bool SortPending => sortingTasks.Any(task => task.Status is TaskStatus.Created);
-    
-    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private readonly List<SortingRequest> pendingRequests = [];
+    private bool disposed;
 
     public void Dispose() {
-        cancellationTokenSource.Cancel();
+        disposed = true;
+        pendingRequests.Clear();
     }
 
     public void AddSortingTask(InventoryType type, params InventoryGrid[] grids) {
-        var sortingTask = new Task(() => {
-            InventorySorter.SortInventory(type, grids);
-        }, cancellationTokenSource.Token);
-        
-        sortingTasks.Add(sortingTask);
+        if (disposed) return;
+
+        // InventoryChanged may fire several times for one operation. Only the latest
+        // request for a sorter is needed before the next framework update.
+        pendingRequests.RemoveAll(request => request.Type == type);
+        pendingRequests.Add(new SortingRequest(type, grids));
     }
 
     public void Update() {
-        if (SortPending) {
-            Service.Log.Verbose($"Launching sorting tasks. {sortingTasks.Count(task => task.Status is TaskStatus.Created)} Tasks Pending.");
-            
-            foreach (var task in sortingTasks.Where(task => task.Status is TaskStatus.Created)) {
-                Service.Log.Verbose("Starting Task");
-                task.Start();
-            }
+        if (disposed || pendingRequests.Count == 0) return;
 
-            Service.Log.Verbose("Scheduling Continuation");
-            Task.WhenAll(sortingTasks).ContinueWith(_ => OnCompletion(), cancellationTokenSource.Token);
+        var requests = pendingRequests.ToArray();
+        pendingRequests.Clear();
+        Service.Log.Verbose($"Running {requests.Length} pending sorting requests on the framework thread.");
+
+        // Native inventory state is owned by the game/framework thread. Running sorts
+        // concurrently can race both the game and other armoury sorting requests.
+        foreach (var request in requests) {
+            InventorySorter.SortInventory(request.Type, request.Grids);
         }
-    }
 
-    private void OnCompletion() {
-        Service.Log.Verbose("Continuing!");
-        
         Service.Framework.RunOnTick(() => {
+            var itemOrderModule = ItemOrderModule.Instance();
+            if (disposed || itemOrderModule == null) return;
+
             Service.Log.Debug("Marked ItemODR as changed.");
-
-            ItemOrderModule.Instance()->UserFileEvent.HasChanges = true;
+            itemOrderModule->UserFileEvent.HasChanges = true;
         }, delayTicks: 5);
-
-        sortingTasks.RemoveAll(task => task.Status is TaskStatus.RanToCompletion or TaskStatus.Canceled or TaskStatus.Faulted);
     }
+
+    private sealed record SortingRequest(InventoryType Type, InventoryGrid[] Grids);
 }

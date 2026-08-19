@@ -18,6 +18,7 @@ public static unsafe class InventorySorter {
     private static void SwapItem(InventorySlot target, InventorySlot source) {
         var slotData = target.ItemOrderEntry;
         var itemData = source.ItemOrderEntry;
+        if (slotData is null || itemData is null) return;
 
         (*slotData, *itemData) = (*itemData, *slotData);
     }

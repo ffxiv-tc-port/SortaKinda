@@ -20,7 +20,12 @@ public unsafe class InventorySlot(InventoryType type, SlotConfig config, int ind
     public SlotConfig Config { get; init; } = config;
 
     [MemberNotNullWhen(true, "ExdItem")] 
-    public bool HasItem => InventoryItem->ItemId is not 0;
+    public bool HasItem {
+        get {
+            var item = InventoryItem;
+            return item != null && item->ItemId is not 0;
+        }
+    }
     
     public Item ExdItem => Service.DataManager.GetExcelSheet<Item>().GetRow(InventoryItem->ItemId);
     

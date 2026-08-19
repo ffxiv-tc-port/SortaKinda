@@ -5,34 +5,52 @@ using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 namespace SortaKinda.Controllers;
 
 public static unsafe class InventoryController {
-    public static int GetInventoryPageSize(InventoryType type)
-        => GetInventorySorter(type)->ItemsPerPage;
+    public static int GetInventoryPageSize(InventoryType type) {
+        var sorter = GetInventorySorter(type);
+        return sorter != null ? sorter->ItemsPerPage : 0;
+    }
 
-    public static InventoryItem* GetItemForSlot(InventoryType type, int slot)
-        => InventoryManager.Instance()->GetInventoryContainer(GetAdjustedInventoryType(type) + GetItemOrderData(type, slot)->Page)->GetInventorySlot(GetItemOrderData(type, slot)->Slot);
+    public static InventoryItem* GetItemForSlot(InventoryType type, int slot) {
+        var itemOrderData = GetItemOrderData(type, slot);
+        var inventoryManager = InventoryManager.Instance();
+        if (itemOrderData is null || inventoryManager is null) return null;
 
-    public static ItemOrderModuleSorterItemEntry* GetItemOrderData(InventoryType type, int slot) 
-        => GetInventorySorter(type)->Items[slot + GetInventoryStartIndex(type)];
+        var container = inventoryManager->GetInventoryContainer(GetAdjustedInventoryType(type) + itemOrderData->Page);
+        return container is null ? null : container->GetInventorySlot(itemOrderData->Slot);
+    }
+
+    public static ItemOrderModuleSorterItemEntry* GetItemOrderData(InventoryType type, int slot) {
+        var sorter = GetInventorySorter(type);
+        if (sorter == null || sorter->Items.First == null || slot < 0 || slot >= sorter->ItemsPerPage) return null;
+
+        var adjustedSlot = slot + GetInventoryStartIndex(type);
+        return adjustedSlot < sorter->Items.Count ? sorter->Items[adjustedSlot] : null;
+    }
     
-        private static ItemOrderModuleSorter* GetInventorySorter(InventoryType type) => type switch {
-        InventoryType.Inventory1 => ItemOrderModule.Instance()->InventorySorter,
-        InventoryType.Inventory2 => ItemOrderModule.Instance()->InventorySorter,
-        InventoryType.Inventory3 => ItemOrderModule.Instance()->InventorySorter,
-        InventoryType.Inventory4 => ItemOrderModule.Instance()->InventorySorter,
-        InventoryType.ArmoryMainHand => ItemOrderModule.Instance()->ArmouryMainHandSorter,
-        InventoryType.ArmoryOffHand => ItemOrderModule.Instance()->ArmouryOffHandSorter,
-        InventoryType.ArmoryHead => ItemOrderModule.Instance()->ArmouryHeadSorter,
-        InventoryType.ArmoryBody => ItemOrderModule.Instance()->ArmouryBodySorter,
-        InventoryType.ArmoryHands => ItemOrderModule.Instance()->ArmouryHandsSorter,
-        InventoryType.ArmoryLegs => ItemOrderModule.Instance()->ArmouryLegsSorter,
-        InventoryType.ArmoryFeets => ItemOrderModule.Instance()->ArmouryFeetSorter,
-        InventoryType.ArmoryEar => ItemOrderModule.Instance()->ArmouryEarsSorter,
-        InventoryType.ArmoryNeck => ItemOrderModule.Instance()->ArmouryNeckSorter,
-        InventoryType.ArmoryWrist => ItemOrderModule.Instance()->ArmouryWristsSorter,
-        InventoryType.ArmoryRings => ItemOrderModule.Instance()->ArmouryRingsSorter,
-        InventoryType.ArmorySoulCrystal => ItemOrderModule.Instance()->ArmourySoulCrystalSorter,
-        _ => throw new Exception($"Type Not Implemented: {type}"),
-    };
+    private static ItemOrderModuleSorter* GetInventorySorter(InventoryType type) {
+        var itemOrderModule = ItemOrderModule.Instance();
+        if (itemOrderModule == null) return null;
+
+        return type switch {
+            InventoryType.Inventory1 => itemOrderModule->InventorySorter,
+            InventoryType.Inventory2 => itemOrderModule->InventorySorter,
+            InventoryType.Inventory3 => itemOrderModule->InventorySorter,
+            InventoryType.Inventory4 => itemOrderModule->InventorySorter,
+            InventoryType.ArmoryMainHand => itemOrderModule->ArmouryMainHandSorter,
+            InventoryType.ArmoryOffHand => itemOrderModule->ArmouryOffHandSorter,
+            InventoryType.ArmoryHead => itemOrderModule->ArmouryHeadSorter,
+            InventoryType.ArmoryBody => itemOrderModule->ArmouryBodySorter,
+            InventoryType.ArmoryHands => itemOrderModule->ArmouryHandsSorter,
+            InventoryType.ArmoryLegs => itemOrderModule->ArmouryLegsSorter,
+            InventoryType.ArmoryFeets => itemOrderModule->ArmouryFeetSorter,
+            InventoryType.ArmoryEar => itemOrderModule->ArmouryEarsSorter,
+            InventoryType.ArmoryNeck => itemOrderModule->ArmouryNeckSorter,
+            InventoryType.ArmoryWrist => itemOrderModule->ArmouryWristsSorter,
+            InventoryType.ArmoryRings => itemOrderModule->ArmouryRingsSorter,
+            InventoryType.ArmorySoulCrystal => itemOrderModule->ArmourySoulCrystalSorter,
+            _ => throw new Exception($"Type Not Implemented: {type}"),
+        };
+    }
 
     private static InventoryType GetAdjustedInventoryType(InventoryType type) => type switch {
         InventoryType.Inventory1 => InventoryType.Inventory1,
@@ -43,9 +61,9 @@ public static unsafe class InventoryController {
     };
 
     private static int GetInventoryStartIndex(InventoryType type) => type switch {
-        InventoryType.Inventory2 => GetInventorySorter(type)->ItemsPerPage,
-        InventoryType.Inventory3 => GetInventorySorter(type)->ItemsPerPage * 2,
-        InventoryType.Inventory4 => GetInventorySorter(type)->ItemsPerPage * 3,
+        InventoryType.Inventory2 => GetInventoryPageSize(type),
+        InventoryType.Inventory3 => GetInventoryPageSize(type) * 2,
+        InventoryType.Inventory4 => GetInventoryPageSize(type) * 3,
         _ => 0,
     };
 }
