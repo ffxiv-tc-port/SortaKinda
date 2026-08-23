@@ -18,6 +18,8 @@ public unsafe class InventoryExpansionController : AddonController<AddonInventor
 	}
 
 	private void AttachNodes(AddonInventoryExpansion* addon) {
+		if (addon is null) return;
+
 		var targetNode = addon->RootNode;
 		if (targetNode is null) return;
 
