@@ -8,6 +8,8 @@ namespace SortaKinda;
 public class Service {
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; }
     [PluginService] public static IClientState ClientState { get; set; }
+    [PluginService] public static IObjectTable ObjectTable { get; set; }
+    [PluginService] public static IPlayerState PlayerState { get; set; }
     [PluginService] public static IGameGui GameGui { get; set; }
     [PluginService] public static IFramework Framework { get; set; }
     [PluginService] public static IPluginLog Log { get; set; }
