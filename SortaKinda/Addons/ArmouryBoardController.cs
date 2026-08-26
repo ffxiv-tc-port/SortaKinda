@@ -18,6 +18,8 @@ public unsafe class ArmouryBoardController : AddonController<AddonInventoryExpan
 	}
 
 	private void AttachNodes(AddonInventoryExpansion* addon) {
+		if (addon is null) return;
+
 		var targetNode = addon->RootNode;
 		if (targetNode is null) return;
 
@@ -45,6 +47,11 @@ public unsafe class ArmouryBoardController : AddonController<AddonInventoryExpan
 	}
 
 	private void DetachNodes(AddonInventoryExpansion* addon) {
+		if (addon is null) {
+			System.NativeController.DisposeNode(ref sortButton);
+			return;
+		}
+
 		var inventoryButton = addon->GetNodeById(17);
 		if (inventoryButton is not null) {
 			inventoryButton->SetXFloat(80.0f);

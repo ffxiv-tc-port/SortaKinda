@@ -18,6 +18,8 @@ public unsafe class InventoryController : AddonController<AddonInventoryExpansio
 	}
 
 	private void AttachNodes(AddonInventoryExpansion* addon) {
+		if (addon is null) return;
+
 		var targetNode = addon->RootNode;
 		if (targetNode is null) return;
 
@@ -48,6 +50,11 @@ public unsafe class InventoryController : AddonController<AddonInventoryExpansio
 	}
 
 	private void DetachNodes(AddonInventoryExpansion* addon) {
+		if (addon is null) {
+			System.NativeController.DisposeNode(ref sortButton);
+			return;
+		}
+
 		var armoryButton = addon->GetNodeById(17);
 		var saddlebagButton = addon->GetNodeById(16);
 		if (armoryButton is not null && saddlebagButton is not null) {
