@@ -36,8 +36,10 @@ public class RuleConfigWindow : Window {
         IsOpen = true;
     }
 
-    public override void PreDraw() 
-        => StyleModelV1.DalamudStandard.Push();
+    public override void PreDraw() {
+        base.PreDraw();
+        StyleModelV1.DalamudStandard.Push();
+    }
 
     protected override void DrawContents() {
         DrawHeader();
@@ -62,8 +64,10 @@ public class RuleConfigWindow : Window {
         }
     }
 
-    public override void PostDraw() 
-        => StyleModelV1.DalamudStandard.Pop();
+    public override void PostDraw() {
+        StyleModelV1.DalamudStandard.Pop();
+        base.PostDraw();
+    }
 
     private void DrawHeader() {
         DrawColorEdit();
