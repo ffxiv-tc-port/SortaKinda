@@ -18,6 +18,9 @@ public class RuleConfigWindow : Window {
     private readonly SortingRule rule;
     private static Vector2 FooterSize => ImGuiHelpers.ScaledVector2(0.0f, 30.0f);
 
+    // 只是 popup 的 ID（不會顯示），開啟與繪製必須用同一個字串。
+    private const string AdvancedOptionsPopupId = "進階選項";
+
     public RuleConfigWindow(SortingRule sortingRule, List<SortingRule> sortingRules) : base($"SortaKinda 規則設定－{sortingRule.Name}###RuleConfig{sortingRule.Id}", new Vector2(550.0f, 375.0f)) {
         rule = sortingRule;
         ruleList = sortingRules;
@@ -27,7 +30,7 @@ public class RuleConfigWindow : Window {
             Icon = FontAwesomeIcon.Cog,
             ShowTooltip = () => ImGui.SetTooltip("其他設定"),
             IconOffset = new Vector2(2.0f, 2.0f),
-            Click = _ => ImGui.OpenPopup("Advanced Options"),
+            Click = _ => ImGui.OpenPopup(AdvancedOptionsPopupId),
         });
 
         Position = ImGui.GetMainViewport().Size / 2.0f - new Vector2(500.0f, 400.0f) / 2.0f;
@@ -36,8 +39,10 @@ public class RuleConfigWindow : Window {
         IsOpen = true;
     }
 
-    public override void PreDraw() 
-        => StyleModelV1.DalamudStandard.Push();
+    public override void PreDraw() {
+        base.PreDraw();
+        StyleModelV1.DalamudStandard.Push();
+    }
 
     protected override void DrawContents() {
         DrawHeader();
@@ -54,7 +59,7 @@ public class RuleConfigWindow : Window {
     }
     
     private void DrawPopup() {
-        using var popup = ImRaii.Popup("進階選項");
+        using var popup = ImRaii.Popup(AdvancedOptionsPopupId);
         if (!popup) return;
                 
         if (ImGui.Checkbox("使用任一符合邏輯", ref rule.InclusiveAnd)) {
@@ -62,8 +67,10 @@ public class RuleConfigWindow : Window {
         }
     }
 
-    public override void PostDraw() 
-        => StyleModelV1.DalamudStandard.Pop();
+    public override void PostDraw() {
+        StyleModelV1.DalamudStandard.Pop();
+        base.PostDraw();
+    }
 
     private void DrawHeader() {
         DrawColorEdit();
@@ -100,6 +107,8 @@ public class RuleConfigWindow : Window {
         }
         
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+            // 還在上面的 ImRaii.Disabled 區段內，不把 Alpha 推回 1 說明框會跟著變淡。
+            using var tooltipAlpha = ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f);
             ImGui.SetTooltip("按住 Shift + Ctrl 並點擊，即可刪除此規則");
         }
     }

@@ -130,6 +130,8 @@ public class SortingRuleListView(SortController sortController, List<SortingRule
         }
 
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+            // 「未排序」那一列整顆按鈕在呼叫端的 BeginDisabled 裡，不把 Alpha 推回 1 說明框會跟著變淡。
+            using var tooltipAlpha = ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f);
             ImGui.SetTooltip("按住 Shift + Ctrl 並點擊，即可刪除此規則");
         }
     }

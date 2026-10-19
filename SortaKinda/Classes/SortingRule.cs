@@ -91,6 +91,15 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
     public SortOrderDirection Direction { get; set; } = SortOrderDirection.Ascending;
     public FillMode FillMode { get; set; } = FillMode.Top;
     public SortOrderMode SortMode { get; set; } = SortOrderMode.Alphabetically;
+
+    // 舊設定檔沒有這個鍵＝空清單＝排序與加入此功能前相同。
+    // 讀檔時 null 清單與 null 項目在這裡丟掉，比較器與介面因此不判 null。
+    public List<AdditionalSortRule> AdditionalSortRules {
+        get => additionalSortRules;
+        set => additionalSortRules = value is null ? [] : value.FindAll(static tier => tier is not null);
+    }
+    private List<AdditionalSortRule> additionalSortRules = [];
+
     public bool InclusiveAnd = false;
 
     public void ShowTooltip() {
@@ -102,7 +111,7 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
         if (y is null) return 0;
         if (x.ExdItem.RowId is 0) return 0;
         if (y.ExdItem.RowId is 0) return 0;
-        if (IsFilterMatch(x.ExdItem, y.ExdItem)) return 0;
+        if (IsSortModeChainMatch(x.ExdItem, y.ExdItem)) return 0;
         if (CompareSlots(x, y)) return 1;
         return -1;
     }
@@ -140,13 +149,9 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
                         shouldSwap = true;
                     }
                 }
-                // else if they match according to the default filter, fallback to alphabetical
-                else if (IsFilterMatch(firstItem, secondItem)) {
-                    shouldSwap = ShouldSwap(firstItem, secondItem, SortOrderMode.Alphabetically);
-                }
-                // else they are not the same item, and the filter result doesn't match
+                // else they are not the same item: each sort tier applies its own direction
                 else {
-                    shouldSwap = ShouldSwap(firstItem, secondItem, SortMode);
+                    return ShouldSwapBySortChain(firstItem, secondItem);
                 }
                 
                 return Direction is SortOrderDirection.Descending ? !shouldSwap : shouldSwap;
@@ -156,7 +161,35 @@ public unsafe class SortingRule : IComparer<InventorySlot>{
         }
     }
     
-    private bool IsFilterMatch(Item firstItem, Item secondItem) => SortMode switch {
+    // 第一層是 SortMode／Direction，之後依序是 AdditionalSortRules；全部相同時照舊依名稱、方向跟第一層。
+    private bool ShouldSwapBySortChain(Item firstItem, Item secondItem) {
+        if (!IsSortMatch(firstItem, secondItem, SortMode)) {
+            return ApplyDirection(ShouldSwap(firstItem, secondItem, SortMode), Direction);
+        }
+
+        foreach (var sortRule in AdditionalSortRules) {
+            if (IsSortMatch(firstItem, secondItem, sortRule.Mode)) continue;
+
+            return ApplyDirection(ShouldSwap(firstItem, secondItem, sortRule.Mode), sortRule.Direction);
+        }
+
+        return ApplyDirection(ShouldSwap(firstItem, secondItem, SortOrderMode.Alphabetically), Direction);
+    }
+
+    private bool IsSortModeChainMatch(Item firstItem, Item secondItem) {
+        if (!IsSortMatch(firstItem, secondItem, SortMode)) return false;
+
+        foreach (var sortRule in AdditionalSortRules) {
+            if (!IsSortMatch(firstItem, secondItem, sortRule.Mode)) return false;
+        }
+
+        return true;
+    }
+
+    private static bool ApplyDirection(bool shouldSwap, SortOrderDirection direction)
+        => direction is SortOrderDirection.Descending ? !shouldSwap : shouldSwap;
+
+    private static bool IsSortMatch(Item firstItem, Item secondItem, SortOrderMode sortMode) => sortMode switch {
         SortOrderMode.ItemId => firstItem.RowId == secondItem.RowId,
         SortOrderMode.ItemLevel => firstItem.LevelItem.RowId == secondItem.LevelItem.RowId,
         SortOrderMode.Alphabetically => string.Equals(firstItem.Name.ExtractText(), secondItem.Name.ExtractText(), StringComparison.OrdinalIgnoreCase),
@@ -254,4 +287,10 @@ public class SortingFilter {
     public required Func<bool> Active { get; init; }
     
     public required Func<InventorySlot, bool> IsSlotAllowed { get; init; }
+}
+
+// 欄位名與上游 MidoriKami/SortaKinda 2.2.x 相同，匯入上游匯出的規則代碼時才讀得到。
+public class AdditionalSortRule {
+    public SortOrderMode Mode { get; set; } = SortOrderMode.ItemId;
+    public SortOrderDirection Direction { get; set; } = SortOrderDirection.Ascending;
 }

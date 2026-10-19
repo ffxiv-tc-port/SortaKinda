@@ -1,47 +1,46 @@
 # SortaKinda
-[![Download count](https://img.shields.io/endpoint?url=https://qzysathwfhebdai6xgauhz4q7m0mzmrf.lambda-url.us-east-1.on.aws/SortaKinda)](https://github.com/MidoriKami/SortaKinda)
 
-SortaKinda is a XivLauncher/Dalamud plugin.
+[MidoriKami/SortaKinda](https://github.com/MidoriKami/SortaKinda) 的台服移植版。
+自訂物品欄整理規則的插件，取代原生 `/isort` 的排序方式。
 
-SortaKinda is an inventory management plugin, worry no more about having to constantly sort your inventory, or lamenting how terrible /isort actually is.
+## 概念
 
-With SortaKinda you define various sorting rules and item categories that fits your preferences, and then tell the plugin where you want those items to go, and in what order they should appear in.
+每一條「排序規則」由**篩選條件（Filter）**與**排序方式（Ordering）**組成：先決定哪些物品套用此規則，
+再決定這些物品要以什麼順序、從物品欄的哪一端開始填入。
 
-Each `Sorting Rule` is made of a `Filter` and a `Ordering`.
+## 篩選條件
 
-![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/0e5dc299-bd9c-41f3-b967-4613c617c8b9)
+- 名稱（支援正規表達式）
+- 物品分類
+- 稀有度（物品顏色）
+- 裝備等級範圍
+- 品級範圍
+- 出售價格範圍
+- 是否可交易、是否為專屬品、是否為收藏品、是否可染色、是否可修理（各自可設為必須／排除／不限）
+- 進階選項「使用任一符合邏輯」（規則設定視窗標題列的齒輪）：符合任一篩選條件即套用（預設為全部都要符合）
 
-## Filters
-Currently you can define two kinds of filters, "Name" or "Type".
+## 排序方式
 
-Name filters use regular expressions to match items, `Prism` will match both `Clear Prism` and `Glamour Prism`.
-You can use more advanced regex strings to filter items more specifically `Crached (Anth|Dend)` to match `Cracked Anthocluster` and `Cracked Dendrocluster`.
+- 依名稱、品級、稀有度、出售價格、物品 ID、物品類型、裝備等級排序，可選昇冪或降冪
+- 「次要排序」：第一層排序依據相同的物品，可再依第二層、第三層等條件排列
+- 可選擇由物品欄第一格開始填入，或由最後一格開始填入
 
-Type filters use the items type as the filter, all items display their item type below the tooltip icon.
-SortaKinda provides a search box for quick lookups, and a complete table for enabling/disabling several item types at once.
+## 其他功能
 
-| ![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/36c8399b-6edc-4cf3-92f6-391b80218daa) | ![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/3034ec9f-f438-428e-88a4-a8105f39e408)   |
-|----------------|-----------|
-| ![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/7e161a51-7f4d-4f21-b2ca-9d3647c14bd7) | ![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/56243fb8-5636-4bc0-a3dd-e10597fd432c)   |
+- 在物品欄、兵裝庫等原生視窗內嵌入排序按鈕，可一鍵觸發排序
+- 自動排序時機可個別勾選：新增／移除／變更／移動／合併／拆分物品時、切換地區時、切換職業時、登入時
+- 可設定是否重新排列尚未套用任何規則的物品
 
+## 指令
 
-![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/7b314475-3f25-4cf8-bc33-0db678472488)
+- `/sortakinda`、`/sorta`：開啟設定視窗
+- `/sortakinda sort`、`/sorta sort`：立即依目前規則排序
 
-## Ordering
-Currently you can select between one of five orderings, "Alphabetical", "Item Level", "Rarity", "Sell Price", or "Item Id"
-It's worth noting, that "Rarity" refers to the items color, ie Pink, Green, Blue, Purple.
+## 台服版的修改
 
-You can then choose to order them "Ascending", which puts the lower value first, or decending which puts the higher value first.
-Ex. Ascending: `ilvl 200` will be before `ilvl 500`
-Ex. Descending: `Butchers Knife` will be before `Augmented Cleaver`
+- 新增「次要排序」分頁（欄位與上游新版相同，可匯入上游匯出的規則代碼）
+- 設定管理器不再自動向 Lodestone 查角色頭像，要查請在視窗上勾選
+- 物品欄與兵裝庫的排序模組各自獨立，其中一個出錯不再連帶影響另一個
+- 介面繁體中文化
 
-Finally you can choose the order that SortaKinda fills the selected inventory slots.
-
-Fill from Top, will place items starting with the first available inventory slot.
-Fill from Bottom, will place items starting with the last available inventory slot.
-
-![image](https://github.com/MidoriKami/SortaKinda/assets/9083275/96def8a1-8966-443e-9ea0-cff03f4ea8cb)
-
-
-
-
+原作者：[MidoriKami](https://github.com/MidoriKami)

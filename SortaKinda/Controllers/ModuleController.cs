@@ -17,32 +17,35 @@ public class ModuleController : IDisposable {
     public void Dispose() {
         Unload();
 
-        foreach (var module in modules.OfType<IDisposable>()) {
-            module.Dispose();
-        }
+        ForEachModule(nameof(IDisposable.Dispose), static module => module.Dispose());
     }
 
     public void Load() {
-        foreach (var module in modules) {
-            module.LoadModule();
-        }
+        ForEachModule(nameof(IModule.LoadModule), static module => module.LoadModule());
     }
 
     public void Unload() {
-        foreach (var module in modules) {
-            module.UnloadModule();
-        }
+        ForEachModule(nameof(IModule.UnloadModule), static module => module.UnloadModule());
     }
 
     public void Update() {
-        foreach (var module in modules) {
-            module.UpdateModule();
-        }
+        ForEachModule(nameof(IModule.UpdateModule), static module => module.UpdateModule());
     }
 
     public void Sort() {
+        ForEachModule(nameof(IModule.SortModule), static module => module.SortModule());
+    }
+
+    // Each module runs isolated: an exception from one module is logged here and must neither
+    // skip the remaining modules nor escape to the caller (game events, native button callbacks).
+    private void ForEachModule(string operation, Action<IModule> action) {
         foreach (var module in modules) {
-            module.SortModule();
+            try {
+                action(module);
+            }
+            catch (Exception e) {
+                Service.Log.Error(e, $"[{module.ModuleName}] Handled exception in {operation}, other modules continue.");
+            }
         }
     }
 
@@ -52,7 +55,7 @@ public class ModuleController : IDisposable {
     public void InventoryChanged(IReadOnlyCollection<InventoryEventArgs> events) {
         if (!Service.ClientState.IsLoggedIn) return;
         
-        foreach (var module in modules) {
+        ForEachModule(nameof(IModule.InventoryChanged), module => {
             var inventoryTypes = new HashSet<InventoryType>();
 
             foreach (var itemEvent in events) {
@@ -66,7 +69,7 @@ public class ModuleController : IDisposable {
             if (inventoryTypes.Count != 0) {
                 module.InventoryChanged(inventoryTypes.ToArray());
             }
-        }
+        });
     }
 
     private static void AddChangedInventories(InventoryEventArgs itemEvent, ICollection<InventoryType> inventoryTypes) {

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Dalamud.NET.Sdk/13.0.0">
     <PropertyGroup>
-        <PackageProjectUrl>https://github.com/cycleapple/SortaKinda/tree/api13-tw</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/ffxiv-tc-port/SortaKinda</PackageProjectUrl>
         <Version>2.1.1.8</Version>
     </PropertyGroup>
 

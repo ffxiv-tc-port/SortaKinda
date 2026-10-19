@@ -27,7 +27,7 @@ public class SortingRuleTooltipView(SortingRule sortingRule) {
             var itemFiltersString = GetAllowedItemsString();
 
             ImGui.TextColored(KnownColor.Gray.Vector(), itemFiltersString.IsNullOrEmpty() ? "任何物品" : itemFiltersString);
-            ImGui.TextColored(KnownColor.Gray.Vector(), sortingRule.SortMode.GetDescription());
+            ImGui.TextColored(KnownColor.Gray.Vector(), GetSortOrderString());
         }
 
         ImGui.EndTooltip();
@@ -46,5 +46,14 @@ public class SortingRuleTooltipView(SortingRule sortingRule) {
         return string.Join("\n", strings
             .Where(eachString => !eachString.IsNullOrEmpty())
             .Select(eachString => eachString[..Math.Min(eachString.Length, 55)]));
+    }
+
+    // 沒有次要排序條件時維持原本只顯示第一層依據的寫法。
+    private string GetSortOrderString() {
+        if (sortingRule.AdditionalSortRules.Count is 0) return sortingRule.SortMode.GetDescription();
+
+        return string.Join(" → ", sortingRule.AdditionalSortRules
+            .Select(tier => $"{tier.Mode.GetDescription()}（{tier.Direction.GetDescription()}）")
+            .Prepend($"{sortingRule.SortMode.GetDescription()}（{sortingRule.Direction.GetDescription()}）"));
     }
 }

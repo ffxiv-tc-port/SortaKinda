@@ -29,6 +29,12 @@ public class ArmoryInventoryModule : ModuleBase<ArmoryConfig> {
     
     private ArmoryInventoryGridView? view;
     
+    // 分頁圖示第一次畫才載，之後整個插件期間沿用；只有 Dispose 會釋放（不在 Draw 中途換掉）。
+    private ArmoryTabTextures? tabTextures;
+
+    // LoadViews 只標記過期，版面等到真的要畫才建（登入時多半根本沒開設定視窗）。
+    private bool viewOutdated;
+
     public override ModuleName ModuleName => ModuleName.ArmoryInventory;
     
     public override ArmoryConfig ModuleConfig { get; set; } = new();
@@ -39,15 +45,25 @@ public class ArmoryInventoryModule : ModuleBase<ArmoryConfig> {
             Inventories.Add(new InventoryGrid(config.Type, config));
         }
 
-        view = new ArmoryInventoryGridView(Inventories);
+        view = null;
+        viewOutdated = true;
     }
 
     public override void Dispose() {
-        view?.Dispose();
+        view = null;
+        tabTextures?.Dispose();
+        tabTextures = null;
         base.Dispose();
     }
 
     public override void Draw() {
+        if (viewOutdated) {
+            // 先清旗標：建失敗時只擲一次、之後不畫，不每幀重試。
+            viewOutdated = false;
+            tabTextures ??= new ArmoryTabTextures();
+            view = new ArmoryInventoryGridView(Inventories, tabTextures);
+        }
+
         view?.Draw();
     }
 

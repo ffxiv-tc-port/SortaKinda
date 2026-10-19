@@ -11,10 +11,45 @@ using SortaKinda.Classes;
 
 namespace SortaKinda.ViewComponents;
 
-public class ArmoryInventoryGridView : IDisposable {
+/// <summary>
+/// 裝備庫左右兩排分頁圖示。只取決於遊戲的 UI 資產，跟角色與縮放無關，由擁有者建一次、插件卸載時才 Dispose。
+/// </summary>
+public sealed class ArmoryTabTextures : IDisposable {
     private readonly UldWrapper armouryBoard;
-    private readonly Dictionary<InventoryType, IDalamudTextureWrap?> leftTabTextures = new();
-    private readonly Dictionary<InventoryType, IDalamudTextureWrap?> rightTabTextures = new();
+
+    public Dictionary<InventoryType, IDalamudTextureWrap?> Left { get; } = new();
+
+    public Dictionary<InventoryType, IDalamudTextureWrap?> Right { get; } = new();
+
+    public ArmoryTabTextures() {
+        armouryBoard = Service.PluginInterface.UiBuilder.LoadUld("ui/uld/ArmouryBoard.uld");
+
+        Left.Add(InventoryType.ArmoryMainHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 0));
+        Left.Add(InventoryType.ArmoryHead, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 1));
+        Left.Add(InventoryType.ArmoryBody, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 2));
+        Left.Add(InventoryType.ArmoryHands, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 3));
+        Left.Add(InventoryType.ArmoryLegs, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 5));
+        Left.Add(InventoryType.ArmoryFeets, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 6));
+
+        Right.Add(InventoryType.ArmoryOffHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 7));
+        Right.Add(InventoryType.ArmoryEar, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 8));
+        Right.Add(InventoryType.ArmoryNeck, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 9));
+        Right.Add(InventoryType.ArmoryWrist, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 10));
+        Right.Add(InventoryType.ArmoryRings, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 11));
+        Right.Add(InventoryType.ArmorySoulCrystal, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 12));
+    }
+
+    public void Dispose() {
+        foreach (var loadedTexture in Left) loadedTexture.Value?.Dispose();
+        foreach (var loadedTexture in Right) loadedTexture.Value?.Dispose();
+        armouryBoard.Dispose();
+    }
+}
+
+/// <summary>分頁版面（位置依建立當下的縮放）。不擁有圖示，換掉時不必 Dispose。</summary>
+public class ArmoryInventoryGridView {
+    private readonly Dictionary<InventoryType, IDalamudTextureWrap?> leftTabTextures;
+    private readonly Dictionary<InventoryType, IDalamudTextureWrap?> rightTabTextures;
 
     private readonly Dictionary<InventoryType, InventoryGridView> views = new();
     private InventoryType selectedTab = InventoryType.ArmoryMainHand;
@@ -25,7 +60,7 @@ public class ArmoryInventoryGridView : IDisposable {
     private static Vector2 ButtonPadding 
         => ImGuiHelpers.ScaledVector2(5.0f, 5.0f);
 
-    public ArmoryInventoryGridView(List<InventoryGrid> armoryInventories) {
+    public ArmoryInventoryGridView(List<InventoryGrid> armoryInventories, ArmoryTabTextures tabTextures) {
         var region = ImGuiHelpers.ScaledVector2(404, 565);
         var position = new Vector2(region.X / 2.0f - InventoryGridView.GetGridWidth() / 2.0f, region.Y / 8.0f);
 
@@ -33,27 +68,8 @@ public class ArmoryInventoryGridView : IDisposable {
             views.Add(inventory.Type, new InventoryGridView(inventory, position));
         }
 
-        armouryBoard = Service.PluginInterface.UiBuilder.LoadUld("ui/uld/ArmouryBoard.uld");
-
-        leftTabTextures.Add(InventoryType.ArmoryMainHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 0));
-        leftTabTextures.Add(InventoryType.ArmoryHead, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 1));
-        leftTabTextures.Add(InventoryType.ArmoryBody, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 2));
-        leftTabTextures.Add(InventoryType.ArmoryHands, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 3));
-        leftTabTextures.Add(InventoryType.ArmoryLegs, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 5));
-        leftTabTextures.Add(InventoryType.ArmoryFeets, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 6));
-
-        rightTabTextures.Add(InventoryType.ArmoryOffHand, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 7));
-        rightTabTextures.Add(InventoryType.ArmoryEar, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 8));
-        rightTabTextures.Add(InventoryType.ArmoryNeck, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 9));
-        rightTabTextures.Add(InventoryType.ArmoryWrist, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 10));
-        rightTabTextures.Add(InventoryType.ArmoryRings, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 11));
-        rightTabTextures.Add(InventoryType.ArmorySoulCrystal, armouryBoard.LoadTexturePart("ui/uld/ArmouryBoard_hr1.tex", 12));
-    }
-
-    public void Dispose() {
-        foreach (var loadedTexture in leftTabTextures) loadedTexture.Value?.Dispose();
-        foreach (var loadedTexture in rightTabTextures) loadedTexture.Value?.Dispose();
-        armouryBoard.Dispose();
+        leftTabTextures = tabTextures.Left;
+        rightTabTextures = tabTextures.Right;
     }
 
     public void Draw() {
