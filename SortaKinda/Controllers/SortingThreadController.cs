@@ -10,6 +10,8 @@ public unsafe class SortingThreadController : IDisposable {
     private readonly List<SortingRequest> pendingRequests = [];
     private bool disposed;
 
+    public bool HasPendingRequests => pendingRequests.Count != 0;
+
     public void Dispose() {
         disposed = true;
         pendingRequests.Clear();

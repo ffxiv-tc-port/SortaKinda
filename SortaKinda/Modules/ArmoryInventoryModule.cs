@@ -70,7 +70,8 @@ public class ArmoryInventoryModule : ModuleBase<ArmoryConfig> {
     protected override void Sort(params InventoryType[] inventoryTypes) {
         foreach (var type in inventoryTypes) {
             if (Inventories.FirstOrDefault(inventory => inventory.Type == type) is { } targetInventory) {
-                if (targetInventory.Inventory.Any(slot => slot.Rule.Id is not SortController.DefaultId)) {
+                if (targetInventory.Inventory.Any(slot =>
+                        System.SystemConfig.ReorderUnsortedItems || slot.Rule.Id is not SortController.DefaultId)) {
                     System.SortingThreadController.AddSortingTask(targetInventory.Type, targetInventory);
                 }
             }

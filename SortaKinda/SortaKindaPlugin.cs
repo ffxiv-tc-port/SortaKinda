@@ -124,14 +124,25 @@ public sealed class SortaKindaPlugin : IDalamudPlugin {
         => System.ModuleController.InventoryChanged(events);
 
     private void SortCommand(params string[] args) {
+        if (!Service.ClientState.IsLoggedIn) {
+            Service.ChatGui.PrintError("請先登入角色後再執行排序。");
+            return;
+        }
+
         var timeSinceLastSort = DateTime.UtcNow - lastSortCommand;
         
         if (timeSinceLastSort.TotalSeconds > 10) {
             System.ModuleController.Sort();
+            if (!System.SortingThreadController.HasPendingRequests) {
+                Service.ChatGui.PrintError("沒有可執行的排序。請用 /sortakinda 開啟設定，將排序規則套用到格子，或勾選「重新排列未排序物品」。若已完成設定，請等待物品欄載入後再試。");
+                return;
+            }
+
             lastSortCommand = DateTime.UtcNow;
+            Service.ChatGui.Print("[SortaKinda] 已排入排序佇列。");
         }
         else {
-            Service.ChatGui.PrintError($"距離上次排序時間太短，請在 {10 - timeSinceLastSort.Seconds} 秒後再試。");
+            Service.ChatGui.PrintError($"距離上次排序時間太短，請在 {Math.Ceiling(10 - timeSinceLastSort.TotalSeconds)} 秒後再試。");
         }
     }
     
