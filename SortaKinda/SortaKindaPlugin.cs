@@ -40,10 +40,15 @@ public sealed class SortaKindaPlugin : IDalamudPlugin {
         
         System.WindowManager.AddWindow(new ConfigurationWindow(), WindowFlags.IsConfigWindow);
 
-        var warmupToken = serializerWarmupCancel.Token;
-        Task.Run(() => SerializerWarmup.Run(warmupToken), warmupToken);
-        
-        if (Service.ClientState is { IsLoggedIn: true }) {
+        var loggedInAtLoad = Service.ClientState is { IsLoggedIn: true };
+
+        // 已登入時緊接著就在框架執行緒上做登入處理，暖身來不及先跑完，只會跟它搶 JIT 與 CPU。
+        if (!loggedInAtLoad) {
+            var warmupToken = serializerWarmupCancel.Token;
+            Task.Run(() => SerializerWarmup.Run(warmupToken), warmupToken);
+        }
+
+        if (loggedInAtLoad) {
             Service.Framework.RunOnFrameworkThread(OnLogin);
         }
         

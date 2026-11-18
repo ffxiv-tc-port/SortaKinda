@@ -26,6 +26,10 @@ public static class SerializerWarmup {
         var stopwatch = Stopwatch.StartNew();
 
         try {
+            // 沒被 Serialize／Deserialize 用過的選項還沒有解析器，直接 GetTypeInfo 會擲 NotSupportedException；
+            // 這是 STJ 第一次序列化時自己會做的同一步，選項建好後本來就不再修改。
+            options.MakeReadOnly(populateMissingResolver: true);
+
             foreach (var type in MetadataOnlyTypes) {
                 if (token.IsCancellationRequested) return;
 
