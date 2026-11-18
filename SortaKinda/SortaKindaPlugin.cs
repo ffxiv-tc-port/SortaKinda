@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin;
@@ -18,6 +20,7 @@ namespace SortaKinda;
 public sealed class SortaKindaPlugin : IDalamudPlugin {
     private uint lastJob = uint.MaxValue;
     private DateTime lastSortCommand = DateTime.MinValue;
+    private readonly CancellationTokenSource serializerWarmupCancel = new();
     
     public SortaKindaPlugin(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Create<Service>();
@@ -36,6 +39,9 @@ public sealed class SortaKindaPlugin : IDalamudPlugin {
         });
         
         System.WindowManager.AddWindow(new ConfigurationWindow(), WindowFlags.IsConfigWindow);
+
+        var warmupToken = serializerWarmupCancel.Token;
+        Task.Run(() => SerializerWarmup.Run(warmupToken), warmupToken);
         
         if (Service.ClientState is { IsLoggedIn: true }) {
             Service.Framework.RunOnFrameworkThread(OnLogin);
@@ -51,6 +57,8 @@ public sealed class SortaKindaPlugin : IDalamudPlugin {
     }
 
     public void Dispose() {
+        serializerWarmupCancel.Cancel();
+
         Service.ClientState.Login -= OnLogin;
         Service.ClientState.Logout -= OnLogout;
         Service.Framework.Update -= OnUpdate;
