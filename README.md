@@ -5,7 +5,7 @@
 
 ## 概念
 
-每一條「排序規則」由**篩選條件（Filter）**與**排序方式（Ordering）**組成：先決定哪些物品套用此規則，
+每一條「排序規則」由**篩選條件（Filter）** 與**排序方式（Ordering）** 組成：先決定哪些物品套用此規則，
 再決定這些物品要以什麼順序、從物品欄的哪一端開始填入。
 
 ## 篩選條件
@@ -43,4 +43,10 @@
 - 物品欄與兵裝庫的排序模組各自獨立，其中一個出錯不再連帶影響另一個
 - 介面繁體中文化
 
+## 安裝
+
+`/xlsettings` 開「Dalamud 設定」→「試驗性功能」→「第三方插件倉庫」，加入 `https://raw.githubusercontent.com/ffxiv-tc-port/DalamudPluginsTC/main/repo.json` 並啟用、儲存，再到「插件管理員」（`/xlplugins`）安裝；同一個插件只裝這裡的版本，不要同時裝上游版。
+
 原作者：[MidoriKami](https://github.com/MidoriKami)
+
+授權：AGPL-3.0-or-later（見 LICENSE）
